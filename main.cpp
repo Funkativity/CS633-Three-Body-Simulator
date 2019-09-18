@@ -18,7 +18,18 @@ struct body {
 
 // places numBodies uniformly spaced along a line from 0 to 1
 void generateBodies(std::vector<body> bodies, int numBodies){
-
+    double xcur = 0.0;
+    double ycur = 0.0;
+    double xStep = 1.0/numBodies;
+    double yStep = 1.0/numBodies;
+    for (auto i = bodies.begin(); i<bodies.end(); i++){
+        i->vX = 0.0;
+        i->vY = 0.0;
+        i->pX = xcur;
+        i->pY = ycur;
+        xcur += xStep;
+        ycur += yStep;
+    }
 }
 
 // TODO: Test if this actually works
@@ -104,6 +115,9 @@ int main(){
     std::vector<double> reduced_performances(test_numbers.size());
     int ind = 0;
     for (auto iter = test_numbers.begin(); iter < test_numbers.end(); iter++){
+        bodies.clear();
+        bodies.resize(iter);
+        generateBodies(bodies, iter)
         standard_performances[ind] = standardThreeBody(bodies, test_numbers[ind]);
         reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
     }
