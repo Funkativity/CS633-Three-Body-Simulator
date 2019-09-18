@@ -59,7 +59,7 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
     }
     auto finish_time = std::chrono::high_resolution_clock::now();
     std::chrono::seconds time_span = 
-            std::chrono::duration_cast<std::chrono::duration<std::chrono::seconds>>(finish_time - start_time);
+            std::chrono::duration_cast<std::chrono::seconds>(finish_time - start_time);
     double num_interactions = (bodies.size() * (bodies.size() + 1)) / 2;
     return (num_interactions / time_span.count());
 }
@@ -86,6 +86,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;
+    }
     //initialize sum force vector to 0s
     //for each body
         //for every other body not done, add to the sum force, subtract from their sum force.
@@ -103,15 +104,16 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
 
 int main(){
 
-    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
+    std::vector<int> test_numbers = {10, 20};
+    // std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
     std::vector<body> bodies;
     std::vector<double> standard_performances(test_numbers.size());
     std::vector<double> reduced_performances(test_numbers.size());
     int ind = 0;
     for (auto iter = test_numbers.begin(); iter < test_numbers.end(); iter++){
         bodies.clear();
-        bodies.resize(iter);
-        generateBodies(bodies, iter)
+        bodies.resize(*iter);
+        generateBodies(bodies, *iter);
         standard_performances[ind] = standardThreeBody(bodies, test_numbers[ind]);
         reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
     }
