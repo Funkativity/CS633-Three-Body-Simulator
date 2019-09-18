@@ -92,6 +92,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;
+    }
     //initialize sum force vector to 0s
     //for each body
         //for every other body not done, add to the sum force, subtract from their sum force.
@@ -116,10 +117,11 @@ int main(){
     int ind = 0;
     for (auto iter = test_numbers.begin(); iter < test_numbers.end(); iter++){
         bodies.clear();
-        bodies.resize(iter);
-        generateBodies(bodies, iter)
+        bodies.resize(*iter);
+        generateBodies(bodies, *iter);
         standard_performances[ind] = standardThreeBody(bodies, test_numbers[ind]);
         reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
+        ind += 1;
     }
 
     //TODO: plot these performances
