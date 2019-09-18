@@ -34,6 +34,8 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
     
     //for every body, add the new velocity to the old velocity.
     
+    //for every body, update position from v and timestep
+    
 }
 
 // similar to standardThreeBody, but uses newton's third to reduce the number 
@@ -48,6 +50,8 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     //for every body, multiply acceleration by time step to get the change in velocity
     
     //for every body, add the new velocity to the old velocity.
+    
+    //for every body, update position from v and timestep
     
 }
 
