@@ -4,6 +4,8 @@
 
 const double G = 6.672 * std::pow(10,-11);
 const double timestep = 0.001;
+const double mass = 1.0;
+const double vi = 0.0;
 
 // struct defining the mass, position, and velocity of each body
 struct body {
@@ -33,17 +35,46 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
             double product = G * j->mass * timestep / distance_squared;
             i->vX += x_diff * product;
             i->vY += y_diff * product;
-            i->pX += i->pX * timestep;
-            i->pY += i->pY * timestep;
+
         }
     }
+    for (auto i = bodies.begin(); i < bodies.end(); i++){
+        i->pX += i->pX * timestep;
+        i->pY += i->pY * timestep;        
+    }
     return -1.0;
+
+    // //initialize sum force vector to 0s
+    // std::vector<double> sum_forces(bodies.size(),0.0);
+    // //for each body
+    //     //for every other body, add to the sum force
+    
+    // //for every body, divide force by mass to get accelleration
+    
+    // //for every body, multiply acceleration by time step to get the change in velocity
+    
+    // //for every body, add the new velocity to the old velocity.
+    
+    // //for every body, update position from v and timestep
+    
 }
 
 // similar to standardThreeBody, but uses newton's third to reduce the number 
 // of calculations
 double reducedThreeBody( std::vector<body> &bodies, int numIterations){
-
+    //initialize sum force vector to 0s
+    //for each body
+        //for every other body not done, add to the sum force, subtract from their sum force.
+        //remove body from list/add to 'done' list
+    
+    //for every body, divide force by mass to get accelleration
+    
+    //for every body, multiply acceleration by time step to get the change in velocity
+    
+    //for every body, add the new velocity to the old velocity.
+    
+    //for every body, update position from v and timestep
+   
 }
 
 int main(){
