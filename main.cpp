@@ -56,6 +56,25 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
 // similar to standardThreeBody, but uses newton's third to reduce the number 
 // of calculations
 double reducedThreeBody( std::vector<body> &bodies, int numIterations){
+    for (auto i = bodies.begin(); i < bodies.end(); i++){
+        for (auto j = i+1; j < bodies.end(); j++){
+            double x_diff = (j->pX - i->pX);
+            double y_diff = (j->pY - i->pY);
+            double distance_squared = x_diff * x_diff + y_diff * y_diff;
+
+            // update by acceleration times time interval
+            double producti = G * j->mass * timestep / distance_squared;
+            double productj = G * i->mass * timestep / distance_squared;
+            i->vX += x_diff * producti;
+            i->vY += y_diff * producti;
+            j->vX += -1 * x_diff * productj;
+            j->vY += -1 * y_diff * productj;
+
+        }
+    }
+    for (auto i = bodies.begin(); i < bodies.end(); i++){
+        i->pX += i->pX * timestep;
+        i->pY += i->pY * timestep;
     //initialize sum force vector to 0s
     //for each body
         //for every other body not done, add to the sum force, subtract from their sum force.
