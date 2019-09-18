@@ -1,6 +1,9 @@
 #include "stdio.h"
 #include "math.h"
 #include <vector>
+#include <chrono>
+#include <fstream>
+#include <iostream> 
 
 const double G = 6.672 * std::pow(10,-11);
 const double timestep = 0.001;
@@ -22,14 +25,15 @@ void generateBodies(std::vector<body> bodies, int numBodies){
 }
 
 // TODO: Test if this actually works
-// TODO: Return a time
 // returns the rate (in millions of interactions / second)
 double standardThreeBody(std::vector<body> &bodies, int numIterations){
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     for (auto i = bodies.begin(); i < bodies.end(); i++){
-        for (auto j = bodies.begin(); i < bodies.end(); i++){
+        for (auto j = bodies.begin(); j < bodies.end(); j++){
             double x_diff = (j->pX - i->pX);
             double y_diff = (j->pY - i->pY);
-            double distance_squared = x_diff * x_diff + y_diff + y_diff;
+            double distance_squared = x_diff * x_diff + y_diff * y_diff;
 
             // update by acceleration times time interval
             double product = G * j->mass * timestep / distance_squared;
@@ -42,21 +46,11 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;        
     }
-    return -1.0;
-
-    // //initialize sum force vector to 0s
-    // std::vector<double> sum_forces(bodies.size(),0.0);
-    // //for each body
-    //     //for every other body, add to the sum force
-    
-    // //for every body, divide force by mass to get accelleration
-    
-    // //for every body, multiply acceleration by time step to get the change in velocity
-    
-    // //for every body, add the new velocity to the old velocity.
-    
-    // //for every body, update position from v and timestep
-    
+    auto finish_time = std::chrono::high_resolution_clock::now();
+    std::chrono::seconds time_span = 
+            std::chrono::duration_cast<std::chrono::duration<std::chrono::seconds>>(finish_time - start_time);
+    double num_interactions = (bodies.size() * (bodies.size() + 1)) / 2;
+    return (num_interactions / time_span.count());
 }
 
 // similar to standardThreeBody, but uses newton's third to reduce the number 
@@ -89,5 +83,24 @@ int main(){
         reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
     }
 
-    //TODO: plot these performances
+
+    // write the performances to body_benchmarks.dat
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // first column will be the number of bodies
+    // second column will be standard performances
+    // third column will be reduced performances
+    std::ofstream outdata;
+    outdata.open("body_benchmarks.dat"); // opens the file
+    if( !outdata ) { // file couldn't be opened
+        std::cerr << "Error: file could not be opened" << std::endl;
+        exit(1);
+    }
+
+    for (int i = 0; i < test_numbers.size(); i++){
+        outdata << test_numbers[i] << "\t\t" << standard_performances[i] << "\t\t"
+                << reduced_performances[i] << std::endl;
+    }
+    outdata.close();
+    
+    return 0;
 }    
