@@ -86,7 +86,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;
-    }   
+    }
 }
 
 int main(){
@@ -103,6 +103,7 @@ int main(){
         generateBodies(bodies, *iter);
         standard_performances[ind] = standardThreeBody(bodies, test_numbers[ind]);
         reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
+        ind += 1;
     }
 
 
