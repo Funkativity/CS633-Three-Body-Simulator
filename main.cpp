@@ -24,9 +24,9 @@ void generateBodies(std::vector<body> bodies, int numBodies){
 // returns the rate (in millions of interactions / second)
 double standardThreeBody(std::vector<body> &bodies, int numIterations){
     //initialize sum force vector to 0s
+    std::vector<double> sum_forces(bodies.size(),0.0);
     //for each body
-        //for every other body not done, add to the sum force, subtract from their sum force.
-        //remove body from list/add to 'done' list
+        //for every other body, add to the sum force
     
     //for every body, divide force by mass to get accelleration
     
@@ -43,7 +43,8 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
 double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     //initialize sum force vector to 0s
     //for each body
-        //for every other body, add to the sum force
+        //for every other body not done, add to the sum force, subtract from their sum force.
+        //remove body from list/add to 'done' list
     
     //for every body, divide force by mass to get accelleration
     
@@ -52,7 +53,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     //for every body, add the new velocity to the old velocity.
     
     //for every body, update position from v and timestep
-    
+   
 }
 
 int main(){
