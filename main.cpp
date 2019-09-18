@@ -86,20 +86,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;
-    }
-    //initialize sum force vector to 0s
-    //for each body
-        //for every other body not done, add to the sum force, subtract from their sum force.
-        //remove body from list/add to 'done' list
-    
-    //for every body, divide force by mass to get accelleration
-    
-    //for every body, multiply acceleration by time step to get the change in velocity
-    
-    //for every body, add the new velocity to the old velocity.
-    
-    //for every body, update position from v and timestep
-   
+    }   
 }
 
 int main(){
