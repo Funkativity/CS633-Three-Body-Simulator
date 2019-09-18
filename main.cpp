@@ -19,9 +19,25 @@ void generateBodies(std::vector<body> bodies, int numBodies){
 
 }
 
+// TODO: Test if this actually works
+// TODO: Return a time
 // returns the rate (in millions of interactions / second)
 double standardThreeBody(std::vector<body> &bodies, int numIterations){
+    for (auto i = bodies.begin(); i < bodies.end(); i++){
+        for (auto j = bodies.begin(); i < bodies.end(); i++){
+            double x_diff = (j->pX - i->pX);
+            double y_diff = (j->pY - i->pY);
+            double distance_squared = x_diff * x_diff + y_diff + y_diff;
 
+            // update by acceleration times time interval
+            double product = G * j->mass * timestep / distance_squared;
+            i->vX += x_diff * product;
+            i->vY += y_diff * product;
+            i->pX += i->pX * timestep;
+            i->pY += i->pY * timestep;
+        }
+    }
+    return -1.0;
 }
 
 // similar to standardThreeBody, but uses newton's third to reduce the number 
