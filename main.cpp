@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream> 
 
-const double G = 6.672 * std::pow(10,-11);
+const double G = 0.00000000006673;
 const double timestep = 0.001;
 const double mass = 1.0;
 const double vi = 0.0;
