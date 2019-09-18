@@ -58,15 +58,15 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
         i->pY += i->pY * timestep;        
     }
     auto finish_time = std::chrono::high_resolution_clock::now();
-    std::chrono::seconds time_span = 
-            std::chrono::duration_cast<std::chrono::seconds>(finish_time - start_time);
-    double num_interactions = (bodies.size() * (bodies.size() + 1)) / 2;
-    return (num_interactions / time_span.count());
+    std::chrono::duration<double> time_span = (finish_time - start_time);
+    double num_million_interactions = ((bodies.size() * (bodies.size() + 1)) / 2) / 1000000.0;
+    return (num_million_interactions / time_span.count());
 }
 
 // similar to standardThreeBody, but uses newton's third to reduce the number 
 // of calculations
 double reducedThreeBody( std::vector<body> &bodies, int numIterations){
+    auto start_time = std::chrono::high_resolution_clock::now();
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         for (auto j = i+1; j < bodies.end(); j++){
             double x_diff = (j->pX - i->pX);
@@ -87,12 +87,16 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
         i->pX += i->pX * timestep;
         i->pY += i->pY * timestep;
     }
+
+    auto finish_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = (finish_time - start_time);
+    double num_million_interactions = ((bodies.size() * (bodies.size() + 1)) / 2) / 1000000.0;
+    return (num_million_interactions / time_span.count());
 }
 
 int main(){
 
-    std::vector<int> test_numbers = {10, 20};
-    // std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
+    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
     std::vector<body> bodies;
     std::vector<double> standard_performances(test_numbers.size());
     std::vector<double> reduced_performances(test_numbers.size());
