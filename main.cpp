@@ -40,7 +40,6 @@ void generateBodies(std::vector<body> &bodies, int numBodies){
     }
 }
 
-// TODO: Test if this actually works
 // returns the rate (in millions of interactions / second)
 double standardThreeBody(std::vector<body> &bodies, int numIterations){
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -54,8 +53,7 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
             double y_diff = (j->pY - i->pY);
             double distance_squared = x_diff * x_diff + y_diff * y_diff;
             double inverse_distance = 1.0 / sqrt(distance_squared);
-            // std::cout << x_diff <<std::endl;
-            // std::cout << distance_squared <<std::endl;
+
             // update by acceleration times time interval
             double product = G * j->mass * timestep / distance_squared;
             i->vX += x_diff * product * inverse_distance;
@@ -84,8 +82,6 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
             double distance_squared = x_diff * x_diff + y_diff * y_diff;
             double inverse_distance = 1.0 / sqrt(distance_squared);
             // update by acceleration times time interval
-            // double producti = G * j->mass * timestep / distance_squared;
-            // double productj = G * i->mass * timestep / distance_squared;
             double product = G * timestep / distance_squared;
             double productj = -1.0 * i->mass * product;
             double producti = j->mass * product;
@@ -146,21 +142,5 @@ int main(){
     }
     out_benches.close();
     
-
-    // std::ofstream out_positions;
-    // out_positions.open("body_positions.dat"); // opens the file
-    // if( !out_positions ) { // file couldn't be opened
-    //     std::cerr << "Error: file could not be opened" << std::endl;
-    //     exit(1);
-    // }
-
-    // for (int i = 0; i < reduced_bodies.size(); i++){
-    //     // std::cout << "For " << test_numbers[i] << " bodies:" << std::endl;
-    //     // std::cout << "################################################################################" << std::endl; 
-    //     std::cout << standard_bodies[i].pX << ',' << standard_bodies[i].pY <<std::endl;
-    //     std::cout << reduced_bodies[i].pX << ',' << reduced_bodies[i].pY <<std::endl;
-    //     std::cout << std::endl;
-    // }
-    // out_positions.close();
     return 0;
 }    
