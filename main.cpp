@@ -5,7 +5,8 @@
 #include <fstream>
 #include <iostream> 
 
-const double G = 6.672 * std::pow(10,-11);
+// const double G = 6.672 * std::pow(10,-11);
+const double G = 1.0;
 const double timestep = 0.001;
 const double mass = 1.0;
 const double vi = 0.0;
@@ -20,7 +21,7 @@ struct body {
 };
 
 // places numBodies uniformly spaced along a line from 0 to 1
-void generateBodies(std::vector<body> bodies, int numBodies){
+void generateBodies(std::vector<body> &bodies, int numBodies){
     double xcur = 0.0;
     double ycur = 0.0;
     double xStep = 1.0/numBodies;
@@ -42,14 +43,22 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
 
     for (auto i = bodies.begin(); i < bodies.end(); i++){
         for (auto j = bodies.begin(); j < bodies.end(); j++){
+            if(i == j){
+                continue;
+            }
             double x_diff = (j->pX - i->pX);
             double y_diff = (j->pY - i->pY);
             double distance_squared = x_diff * x_diff + y_diff * y_diff;
-
+            double inverse_distance = 1.0 / sqrt(distance_squared);
+            // std::cout << x_diff <<std::endl;
+            // std::cout << distance_squared <<std::endl;
             // update by acceleration times time interval
             double product = G * j->mass * timestep / distance_squared;
-            i->vX += x_diff * product;
-            i->vY += y_diff * product;
+            i->vX += x_diff * product * inverse_distance;
+            i->vY += y_diff * product * inverse_distance;
+            std::cout << x_diff * product * inverse_distance << ',';
+            std::cout << y_diff * product * inverse_distance << std::endl;
+            std::cout << i->vX << ',' << i->vY <<std::endl;
 
         }
     }
@@ -72,15 +81,17 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
             double x_diff = (j->pX - i->pX);
             double y_diff = (j->pY - i->pY);
             double distance_squared = x_diff * x_diff + y_diff * y_diff;
-
+            double inverse_distance = 1.0 / sqrt(distance_squared);
             // update by acceleration times time interval
-            double producti = G * j->mass * timestep / distance_squared;
-            double productj = G * i->mass * timestep / distance_squared;
-            i->vX += x_diff * producti;
-            i->vY += y_diff * producti;
-            j->vX += -1 * x_diff * productj;
-            j->vY += -1 * y_diff * productj;
-
+            // double producti = G * j->mass * timestep / distance_squared;
+            // double productj = G * i->mass * timestep / distance_squared;
+            double product = G * timestep / distance_squared;
+            double productj = i->mass * product;
+            double producti = -1.0 * j->mass * product;
+            i->vX += x_diff * producti * inverse_distance;
+            i->vY += y_diff * producti * inverse_distance;
+            j->vX += x_diff * productj * inverse_distance;
+            j->vY += y_diff * productj * inverse_distance;
         }
     }
     for (auto i = bodies.begin(); i < bodies.end(); i++){
@@ -96,17 +107,21 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
 
 int main(){
 
-    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
+    std::vector<int> test_numbers = {10};//, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
     std::vector<body> bodies;
     std::vector<double> standard_performances(test_numbers.size());
     std::vector<double> reduced_performances(test_numbers.size());
     int ind = 0;
+    std::vector<body> standard_bodies;
+    std::vector<body> reduced_bodies;
     for (auto iter = test_numbers.begin(); iter < test_numbers.end(); iter++){
         bodies.clear();
         bodies.resize(*iter);
         generateBodies(bodies, *iter);
-        standard_performances[ind] = standardThreeBody(bodies, test_numbers[ind]);
-        reduced_performances[ind] = reducedThreeBody(bodies, test_numbers[ind]);
+        standard_bodies = bodies;
+        reduced_bodies = bodies;
+        standard_performances[ind] = standardThreeBody(standard_bodies, test_numbers[ind]);
+        reduced_performances[ind] = reducedThreeBody(reduced_bodies, test_numbers[ind]);
         ind += 1;
     }
 
@@ -116,18 +131,34 @@ int main(){
     // first column will be the number of bodies
     // second column will be standard performances
     // third column will be reduced performances
-    std::ofstream outdata;
-    outdata.open("body_benchmarks.dat"); // opens the file
-    if( !outdata ) { // file couldn't be opened
+    std::ofstream out_benches;
+    out_benches.open("body_benchmarks.dat"); // opens the file
+    if( !out_benches ) { // file couldn't be opened
         std::cerr << "Error: file could not be opened" << std::endl;
         exit(1);
     }
 
     for (int i = 0; i < test_numbers.size(); i++){
-        outdata << test_numbers[i] << "\t\t" << standard_performances[i] << "\t\t"
+        out_benches << test_numbers[i] << "\t\t" << standard_performances[i] << "\t\t"
                 << reduced_performances[i] << std::endl;
     }
-    outdata.close();
+    out_benches.close();
     
+
+    std::ofstream out_positions;
+    out_positions.open("body_positions.dat"); // opens the file
+    if( !out_positions ) { // file couldn't be opened
+        std::cerr << "Error: file could not be opened" << std::endl;
+        exit(1);
+    }
+
+    for (int i = 0; i < reduced_bodies.size(); i++){
+        // std::cout << "For " << test_numbers[i] << " bodies:" << std::endl;
+        // std::cout << "################################################################################" << std::endl; 
+        std::cout << standard_bodies[i].pX << ',' << standard_bodies[i].pY <<std::endl;
+        std::cout << reduced_bodies[i].pX << ',' << reduced_bodies[i].pY <<std::endl;
+        std::cout << std::endl;
+    }
+    out_positions.close();
     return 0;
 }    
