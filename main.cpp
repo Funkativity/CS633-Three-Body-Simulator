@@ -7,8 +7,11 @@
 
 
 const double G = 0.00000000006673;
+// const double G = 1;
+
+// const double timestep = 1.0;
 const double timestep = 0.001;
-const double mass = 1.0;
+const double kMASS = 1;
 const double vi = 0.0;
 
 // struct defining the mass, position, and velocity of each body
@@ -27,6 +30,7 @@ void generateBodies(std::vector<body> &bodies, int numBodies){
     double xStep = 1.0/numBodies;
     double yStep = 1.0/numBodies;
     for (auto i = bodies.begin(); i<bodies.end(); i++){
+        i->mass = kMASS;
         i->vX = 0.0;
         i->vY = 0.0;
         i->pX = xcur;
@@ -56,16 +60,13 @@ double standardThreeBody(std::vector<body> &bodies, int numIterations){
             double product = G * j->mass * timestep / distance_squared;
             i->vX += x_diff * product * inverse_distance;
             i->vY += y_diff * product * inverse_distance;
-            std::cout << x_diff * product * inverse_distance << ',';
-            std::cout << y_diff * product * inverse_distance << std::endl;
-            std::cout << i->vX << ',' << i->vY <<std::endl;
-
         }
     }
     for (auto i = bodies.begin(); i < bodies.end(); i++){
-        i->pX += i->pX * timestep;
-        i->pY += i->pY * timestep;        
+        i->pX += i->vX * timestep;
+        i->pY += i->vY * timestep;        
     }
+
     auto finish_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = (finish_time - start_time);
     double num_million_interactions = ((bodies.size() * (bodies.size() + 1)) / 2) / 1000000.0;
@@ -86,8 +87,8 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
             // double producti = G * j->mass * timestep / distance_squared;
             // double productj = G * i->mass * timestep / distance_squared;
             double product = G * timestep / distance_squared;
-            double productj = i->mass * product;
-            double producti = -1.0 * j->mass * product;
+            double productj = -1.0 * i->mass * product;
+            double producti = j->mass * product;
             i->vX += x_diff * producti * inverse_distance;
             i->vY += y_diff * producti * inverse_distance;
             j->vX += x_diff * productj * inverse_distance;
@@ -95,8 +96,8 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
         }
     }
     for (auto i = bodies.begin(); i < bodies.end(); i++){
-        i->pX += i->pX * timestep;
-        i->pY += i->pY * timestep;
+        i->pX += i->vX * timestep;
+        i->pY += i->vY * timestep;
     }
 
     auto finish_time = std::chrono::high_resolution_clock::now();
@@ -107,7 +108,8 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
 
 int main(){
 
-    std::vector<int> test_numbers = {10};//, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
+    // std::vector<int> test_numbers = {15000};
+    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000};
     std::vector<body> bodies;
     std::vector<double> standard_performances(test_numbers.size());
     std::vector<double> reduced_performances(test_numbers.size());
@@ -145,20 +147,20 @@ int main(){
     out_benches.close();
     
 
-    std::ofstream out_positions;
-    out_positions.open("body_positions.dat"); // opens the file
-    if( !out_positions ) { // file couldn't be opened
-        std::cerr << "Error: file could not be opened" << std::endl;
-        exit(1);
-    }
+    // std::ofstream out_positions;
+    // out_positions.open("body_positions.dat"); // opens the file
+    // if( !out_positions ) { // file couldn't be opened
+    //     std::cerr << "Error: file could not be opened" << std::endl;
+    //     exit(1);
+    // }
 
-    for (int i = 0; i < reduced_bodies.size(); i++){
-        // std::cout << "For " << test_numbers[i] << " bodies:" << std::endl;
-        // std::cout << "################################################################################" << std::endl; 
-        std::cout << standard_bodies[i].pX << ',' << standard_bodies[i].pY <<std::endl;
-        std::cout << reduced_bodies[i].pX << ',' << reduced_bodies[i].pY <<std::endl;
-        std::cout << std::endl;
-    }
-    out_positions.close();
+    // for (int i = 0; i < reduced_bodies.size(); i++){
+    //     // std::cout << "For " << test_numbers[i] << " bodies:" << std::endl;
+    //     // std::cout << "################################################################################" << std::endl; 
+    //     std::cout << standard_bodies[i].pX << ',' << standard_bodies[i].pY <<std::endl;
+    //     std::cout << reduced_bodies[i].pX << ',' << reduced_bodies[i].pY <<std::endl;
+    //     std::cout << std::endl;
+    // }
+    // out_positions.close();
     return 0;
 }    
