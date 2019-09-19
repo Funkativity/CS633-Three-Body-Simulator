@@ -109,7 +109,7 @@ double reducedThreeBody( std::vector<body> &bodies, int numIterations){
 int main(){
 
     // std::vector<int> test_numbers = {15000};
-    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000};
+    std::vector<int> test_numbers = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000};
     std::vector<body> bodies;
     std::vector<double> standard_performances(test_numbers.size());
     std::vector<double> reduced_performances(test_numbers.size());
